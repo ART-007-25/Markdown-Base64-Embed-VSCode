@@ -7,7 +7,9 @@
   "engines": {
     "vscode": "^1.85.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [
     "onLanguage:markdown"
   ],
@@ -19,7 +21,12 @@
         "markdownBase64Embed.targetFormat": {
           "type": "string",
           "default": "preserve",
-          "enum": ["preserve", "webp", "png", "jpeg"],
+          "enum": [
+            "preserve",
+            "webp",
+            "png",
+            "jpeg"
+          ],
           "markdownDescription": "Target image format for embedded Base64 strings. Choose `webp` to significantly reduce file size and character bloat."
         },
         "markdownBase64Embed.quality": {
@@ -48,6 +55,7 @@
     "typescript": "^5.x"
   },
   "dependencies": {
+    "@vscode/vsce": "^4.1.0",
     "sharp": "^0.33.2"
   }
 }
