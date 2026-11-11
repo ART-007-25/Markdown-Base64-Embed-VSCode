@@ -1,0 +1,53 @@
+{
+  "name": "markdown-base64-embed",
+  "displayName": "Markdown Base64 Image Embed",
+  "description": "Automatically convert pasted or dropped images into inline Base64 Markdown embeds.",
+  "version": "1.0.0",
+  "publisher": "developer",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Markdown Base64 Embed",
+      "properties": {
+        "markdownBase64Embed.targetFormat": {
+          "type": "string",
+          "default": "preserve",
+          "enum": ["preserve", "webp", "png", "jpeg"],
+          "markdownDescription": "Target image format for embedded Base64 strings. Choose `webp` to significantly reduce file size and character bloat."
+        },
+        "markdownBase64Embed.quality": {
+          "type": "number",
+          "default": 80,
+          "minimum": 1,
+          "maximum": 100,
+          "markdownDescription": "Compression quality for lossy formats (`webp` or `jpeg`). Higher values retain quality; lower values reduce character length."
+        },
+        "markdownBase64Embed.defaultAltText": {
+          "type": "string",
+          "default": "Embedded Image",
+          "description": "Default alt text inserted into the Markdown image syntax."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.x",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.x"
+  },
+  "dependencies": {
+    "sharp": "^0.33.2"
+  }
+}
