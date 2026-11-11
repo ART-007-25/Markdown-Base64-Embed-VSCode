@@ -30,7 +30,6 @@ async function processImage(
   targetFormat: string,
   quality: number
 ): Promise<{ data: Buffer; mime: string }> {
-  // If set to preserve, or if the source is SVG (vector), avoid raster conversion.
   if (targetFormat === 'preserve' || sourceMime === 'image/svg+xml') {
     return { data: buffer, mime: sourceMime };
   }
@@ -95,14 +94,19 @@ async function createBase64MarkdownSnippet(
  * Provider handling paste actions in Markdown documents.
  */
 class MarkdownImagePasteProvider implements vscode.DocumentPasteEditProvider {
-  static readonly id = 'markdownBase64Embed.pasteProvider';
+  static readonly kind = vscode.DocumentDropOrPasteEditKind.Empty.append(
+    'markdown',
+    'paste',
+    'base64Image'
+  );
 
   async provideDocumentPasteEdits(
     _document: vscode.TextDocument,
     _ranges: readonly vscode.Range[],
     dataTransfer: vscode.DataTransfer,
+    _context: vscode.DocumentPasteEditContext,
     token: vscode.CancellationToken
-  ): Promise<vscode.DocumentPasteEdit | undefined> {
+  ): Promise<vscode.DocumentPasteEdit[] | undefined> {
     const snippet = await createBase64MarkdownSnippet(dataTransfer, token);
     if (!snippet) {
       return undefined;
@@ -111,10 +115,11 @@ class MarkdownImagePasteProvider implements vscode.DocumentPasteEditProvider {
     const edit = new vscode.DocumentPasteEdit(
       snippet,
       'Insert as inline Base64 Image',
-      MarkdownImagePasteProvider.id
+      MarkdownImagePasteProvider.kind
     );
 
-    return edit;
+    // Provide as an array
+    return [edit];
   }
 }
 
@@ -122,7 +127,11 @@ class MarkdownImagePasteProvider implements vscode.DocumentPasteEditProvider {
  * Provider handling drag-and-drop actions in Markdown documents.
  */
 class MarkdownImageDropProvider implements vscode.DocumentDropEditProvider {
-  static readonly id = 'markdownBase64Embed.dropProvider';
+  static readonly kind = vscode.DocumentDropOrPasteEditKind.Empty.append(
+    'markdown',
+    'drop',
+    'base64Image'
+  );
 
   async provideDocumentDropEdits(
     _document: vscode.TextDocument,
@@ -137,6 +146,7 @@ class MarkdownImageDropProvider implements vscode.DocumentDropEditProvider {
 
     const edit = new vscode.DocumentDropEdit(snippet);
     edit.title = 'Insert as inline Base64 Image';
+    edit.kind = MarkdownImageDropProvider.kind;
 
     return edit;
   }
@@ -151,7 +161,7 @@ export function activate(context: vscode.ExtensionContext) {
       selector,
       new MarkdownImagePasteProvider(),
       {
-        providedPasteEditKinds: [vscode.DocumentDropOrPasteEditKind.Empty],
+        providedPasteEditKinds: [MarkdownImagePasteProvider.kind],
         pasteMimeTypes: SUPPORTED_MIME_TYPES
       }
     )
@@ -163,6 +173,7 @@ export function activate(context: vscode.ExtensionContext) {
       selector,
       new MarkdownImageDropProvider(),
       {
+        providedDropEditKinds: [MarkdownImageDropProvider.kind],
         dropMimeTypes: SUPPORTED_MIME_TYPES
       }
     )
