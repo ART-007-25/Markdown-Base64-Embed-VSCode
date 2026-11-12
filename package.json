@@ -3,7 +3,7 @@
   "displayName": "Markdown Base64 Image Embed",
   "description": "Automatically convert pasted or dropped images into inline Base64 Markdown embeds.",
   "version": "1.0.0",
-  "publisher": "developer",
+  "publisher": "Abiral Raj Thapa",
   "engines": {
     "vscode": "^1.85.0"
   },
